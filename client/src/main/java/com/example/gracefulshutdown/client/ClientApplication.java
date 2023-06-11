@@ -61,11 +61,15 @@ public class ClientApplication {
 			return webClient.get()
 					.uri("/delay/1")
 					.retrieve()
-					.toBodilessEntity()
-					.onErrorResume((t) -> Mono.just(ResponseEntity.status(503).build()))
+					.toEntity(Object.class)
+					.onErrorResume((t) -> Mono.just(ResponseEntity.status(503).body(t)))
 					.map(resp -> {
 						log.responseComplete = OffsetDateTime.now();
 						log.responseStatusCode = resp.getStatusCode();
+						final var body = resp.getBody();
+						if (body != null) {
+							log.responseDetail = body;
+						}
 						return log;
 					});
 		};
@@ -76,13 +80,15 @@ public class ClientApplication {
 		private transient OffsetDateTime requestStart;
 		private transient OffsetDateTime responseComplete;
 		private transient HttpStatusCode responseStatusCode;
+		private transient Object responseDetail;
 		@Override
 		public String toString() {
 			return "ExchangeLog(" +
 					"requestID=" + this.requestID +
 					", requestStart=" + this.requestStart +
 					", responseComplete=" + this.responseComplete +
-					", responseStatusCode=" + this.responseStatusCode;
+					", responseStatusCode=" + this.responseStatusCode +
+					", responseDetail=" + this.responseDetail;
 		}
 	}
 
