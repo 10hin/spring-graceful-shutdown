@@ -47,7 +47,7 @@ public class ClientApplication {
 						if (log.responseStatusCode.is2xxSuccessful()) {
 							LOGGER.info("response status: {}, dur: {}", log.responseStatusCode, Duration.between(log.requestStart, log.responseComplete));
 						} else {
-							LOGGER.error("{}", log);
+							LOGGER.error("response status: {}, dur: {}, {}", log.responseStatusCode, Duration.between(log.requestStart, log.responseComplete), log);
 						}
 					})
 					.blockLast();
